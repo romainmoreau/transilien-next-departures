@@ -1,0 +1,30 @@
+spring:
+  profiles:
+    active: small,light
+e-paper:
+  show-update-time: true
+---
+spring:
+  profiles: small
+e-paper:
+  columns: 2
+  etat-width: 78
+  item-height: 40
+  line-spacing: 0
+  margin-width: 10
+  station-width: 233
+  time-width: 67
+---
+spring:
+  profiles: dark
+e-paper:
+  background-color: LIGHT_GRAY 
+  border-color: DARK_GRAY
+  text-color: WHITE
+---
+spring:
+  profiles: light
+e-paper:
+  background-color: WHITE 
+  border-color: LIGHT_GRAY
+  text-color: BLACK

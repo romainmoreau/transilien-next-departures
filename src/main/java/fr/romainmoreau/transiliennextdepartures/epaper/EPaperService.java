@@ -5,13 +5,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.romainmoreau.epaper.client.api.Color;
 import fr.romainmoreau.epaper.client.api.DrawingColors;
 import fr.romainmoreau.epaper.client.api.EPaperClient;
 import fr.romainmoreau.epaper.client.api.EPaperException;
@@ -26,65 +27,72 @@ import fr.romainmoreau.transiliennextdepartures.transilien.Train;
 public class EPaperService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EPaperService.class);
 
-	private static final int ITEM_HEIGHT = 40;
+	private int maxItemsByColumn;
 
-	private static final int COLUMNS = 2;
-
-	private static final int LINE_SPACING = 0;
-
-	private static final int MARGIN_WIDTH = 10;
-
-	private static final int TIME_WIDTH = 67;
-
-	private static final int ETAT_WIDTH = 78;
-
-	private static final int STATION_WIDTH = 233;
-
-	private static final int MAX_ITEMS_BY_COLUMN;
-
-	private static final int COLUMN_WIDTH;
-
-	static {
-		MAX_ITEMS_BY_COLUMN = EPaperClient.HEIGHT / ITEM_HEIGHT;
-		COLUMN_WIDTH = EPaperClient.WIDTH / COLUMNS;
-	}
+	private int columnWidth;
 
 	@Autowired
 	private EPaperClient ePaperClient;
 
+	@Autowired
+	private EPaperProperties ePaperProperties;
+
+	@PostConstruct
+	private void postConstruct() {
+		maxItemsByColumn = EPaperClient.HEIGHT / ePaperProperties.getItemHeight();
+		columnWidth = EPaperClient.WIDTH / ePaperProperties.getColumns();
+	}
+
 	public void update(LocalDateTime receivedLocalDateTime, Passages passages) {
 		try {
 			ePaperClient.clear();
-			List<Train> trainList = passages.getTrain().subList(0, MAX_ITEMS_BY_COLUMN * COLUMNS - 1);
-			for (int i = 0; i < COLUMNS; i++) {
-				for (int j = 0; j < MAX_ITEMS_BY_COLUMN; j++) {
-					ePaperClient.setDrawingColors(new DrawingColors(Color.LIGHT_GRAY, Color.WHITE));
-					ePaperClient.fillRectangle(i * COLUMN_WIDTH, j * ITEM_HEIGHT, (i + 1) * COLUMN_WIDTH - 1,
-							(j + 1) * ITEM_HEIGHT - 1);
-					ePaperClient.setDrawingColors(new DrawingColors(Color.DARK_GRAY, Color.WHITE));
-					ePaperClient.drawRectangle(i * COLUMN_WIDTH, j * ITEM_HEIGHT, (i + 1) * COLUMN_WIDTH - 1,
-							(j + 1) * ITEM_HEIGHT - 1);
-					ePaperClient.setDrawingColors(new DrawingColors(Color.WHITE, Color.LIGHT_GRAY));
-					if (i == COLUMNS - 1 && j == MAX_ITEMS_BY_COLUMN - 1) {
-						ePaperClient.displayText(i * COLUMN_WIDTH, j * ITEM_HEIGHT, (i + 1) * COLUMN_WIDTH - 1,
-								(j + 1) * ITEM_HEIGHT - 1, FontSize.DOTS_32, LINE_SPACING, HorizontalAlignment.CENTER,
+			int maxTrains = maxItemsByColumn * ePaperProperties.getColumns();
+			if (ePaperProperties.isShowUpdateTime()) {
+				maxTrains--;
+			}
+			List<Train> trainList = passages.getTrain().subList(0, Math.min(passages.getTrain().size(), maxTrains));
+			for (int i = 0; i < ePaperProperties.getColumns(); i++) {
+				for (int j = 0; j < maxItemsByColumn; j++) {
+					ePaperClient.setDrawingColors(new DrawingColors(ePaperProperties.getBackgroundColor(),
+							ePaperProperties.getBackgroundColor()));
+					ePaperClient.fillRectangle(i * columnWidth, j * ePaperProperties.getItemHeight(),
+							(i + 1) * columnWidth - 1, (j + 1) * ePaperProperties.getItemHeight() - 1);
+					ePaperClient.setDrawingColors(new DrawingColors(ePaperProperties.getBorderColor(),
+							ePaperProperties.getBackgroundColor()));
+					ePaperClient.drawRectangle(i * columnWidth, j * ePaperProperties.getItemHeight(),
+							(i + 1) * columnWidth - 1, (j + 1) * ePaperProperties.getItemHeight() - 1);
+					ePaperClient.setDrawingColors(
+							new DrawingColors(ePaperProperties.getTextColor(), ePaperProperties.getBackgroundColor()));
+					int index = i * maxItemsByColumn + j;
+					if (ePaperProperties.isShowUpdateTime()
+							&& (i == ePaperProperties.getColumns() - 1 && j == maxItemsByColumn - 1)) {
+						ePaperClient.displayText(i * columnWidth, j * ePaperProperties.getItemHeight(),
+								(i + 1) * columnWidth - 1, (j + 1) * ePaperProperties.getItemHeight() - 1,
+								FontSize.DOTS_32, ePaperProperties.getLineSpacing(), HorizontalAlignment.CENTER,
 								VerticalAlignment.CENTER,
 								receivedLocalDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-					} else {
-						Train train = trainList.get(i * MAX_ITEMS_BY_COLUMN + j);
-						ePaperClient.displayText(i * COLUMN_WIDTH + 1, j * ITEM_HEIGHT,
-								i * COLUMN_WIDTH + TIME_WIDTH + 1, (j + 1) * ITEM_HEIGHT - 1, FontSize.DOTS_32,
-								LINE_SPACING, HorizontalAlignment.LEFT, VerticalAlignment.CENTER,
+					} else if (index < passages.getTrain().size()) {
+						Train train = trainList.get(index);
+						ePaperClient.displayText(i * columnWidth + 1, j * ePaperProperties.getItemHeight(),
+								i * columnWidth + ePaperProperties.getTimeWidth() + 1,
+								(j + 1) * ePaperProperties.getItemHeight() - 1, FontSize.DOTS_32,
+								ePaperProperties.getLineSpacing(), HorizontalAlignment.LEFT, VerticalAlignment.CENTER,
 								train.getDate().getText().split(" ")[1]);
 						if (train.getEtat() != null) {
-							ePaperClient.displayText(i * COLUMN_WIDTH + TIME_WIDTH + MARGIN_WIDTH + 1, j * ITEM_HEIGHT,
-									i * COLUMN_WIDTH + TIME_WIDTH + ETAT_WIDTH + MARGIN_WIDTH + 1,
-									(j + 1) * ITEM_HEIGHT - 1, FontSize.DOTS_32, LINE_SPACING, HorizontalAlignment.LEFT,
+							ePaperClient.displayText(
+									i * columnWidth + ePaperProperties.getTimeWidth()
+											+ ePaperProperties.getMarginWidth() + 1,
+									j * ePaperProperties.getItemHeight(),
+									i * columnWidth + ePaperProperties.getTimeWidth() + ePaperProperties.getEtatWidth()
+											+ ePaperProperties.getMarginWidth() + 1,
+									(j + 1) * ePaperProperties.getItemHeight() - 1, FontSize.DOTS_32,
+									ePaperProperties.getLineSpacing(), HorizontalAlignment.LEFT,
 									VerticalAlignment.CENTER, StringUtils.stripAccents(train.getEtat().toString()));
 						}
-						ePaperClient.displayText((i + 1) * COLUMN_WIDTH - 2 - STATION_WIDTH, j * ITEM_HEIGHT,
-								(i + 1) * COLUMN_WIDTH - 2, (j + 1) * ITEM_HEIGHT - 1, FontSize.DOTS_32, LINE_SPACING,
-								HorizontalAlignment.RIGHT, VerticalAlignment.CENTER,
+						ePaperClient.displayText((i + 1) * columnWidth - 2 - ePaperProperties.getStationWidth(),
+								j * ePaperProperties.getItemHeight(), (i + 1) * columnWidth - 2,
+								(j + 1) * ePaperProperties.getItemHeight() - 1, FontSize.DOTS_32,
+								ePaperProperties.getLineSpacing(), HorizontalAlignment.RIGHT, VerticalAlignment.CENTER,
 								StringUtils.stripAccents(Station.fromUicCode(train.getTerm()).getName()));
 					}
 				}

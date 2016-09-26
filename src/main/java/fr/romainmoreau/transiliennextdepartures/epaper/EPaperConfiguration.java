@@ -16,12 +16,12 @@ public class EPaperConfiguration {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EPaperConfiguration.class);
 
 	@Autowired
-	private EPaperClientProperties ePaperClientProperties;
+	private EPaperProperties ePaperProperties;
 
 	@Bean
 	public EPaperClient ePaperClient() throws IOException {
-		LOGGER.info("Creating e-paper client using port name {}", ePaperClientProperties.getPortName());
-		return new JsscEPaperClient(ePaperClientProperties.getPortName());
+		LOGGER.info("Creating e-paper client using port name {}", ePaperProperties.getPortName());
+		return new JsscEPaperClient(ePaperProperties.getPortName());
 	}
 
 }
