@@ -16,6 +16,8 @@ public class EPaperProperties {
 	@NotNull
 	private String portName;
 
+	private long timeout;
+
 	private boolean showUpdateTime;
 
 	@Min(33)
@@ -55,6 +57,14 @@ public class EPaperProperties {
 
 	public void setPortName(String portName) {
 		this.portName = portName;
+	}
+
+	public long getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(long timeout) {
+		this.timeout = timeout;
 	}
 
 	public boolean isShowUpdateTime() {
