@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import fr.romainmoreau.epaper.client.api.Color;
 import fr.romainmoreau.epaper.client.api.EPaperClient;
+import fr.romainmoreau.epaper.client.api.FontSize;
 
 @Component
 @ConfigurationProperties("e-paper")
@@ -20,27 +21,54 @@ public class EPaperProperties {
 
 	private boolean showUpdateTime;
 
-	@Min(33)
-	@Max(EPaperClient.HEIGHT)
-	private int itemHeight;
+	@Min(0)
+	@Max(EPaperClient.WIDTH - 1)
+	private int x0;
+
+	@Min(0)
+	@Max(EPaperClient.HEIGHT - 1)
+	private int y0;
+
+	@Min(0)
+	@Max(EPaperClient.WIDTH - 1)
+	private int x1;
+
+	@Min(0)
+	@Max(EPaperClient.HEIGHT - 1)
+	private int y1;
 
 	@Min(1)
 	private int columns;
+
+	@Min(1)
+	private int rows;
+
+	@NotNull
+	private FontSize fontSize;
 
 	@Min(0)
 	private int lineSpacing;
 
 	@Min(0)
-	private int marginWidth;
+	private int timePaddingLeft;
 
 	@Min(0)
-	private int timeWidth;
+	private int timePaddingRight;
 
 	@Min(0)
-	private int etatWidth;
+	private double timeWidth;
 
 	@Min(0)
-	private int stationWidth;
+	private double etatWidth;
+
+	@Min(0)
+	private int stationPaddingLeft;
+
+	@Min(0)
+	private int stationPaddingRight;
+
+	@Min(0)
+	private double stationWidth;
 
 	@NotNull
 	private Color borderColor;
@@ -75,12 +103,36 @@ public class EPaperProperties {
 		this.showUpdateTime = showUpdateTime;
 	}
 
-	public int getItemHeight() {
-		return itemHeight;
+	public int getX0() {
+		return x0;
 	}
 
-	public void setItemHeight(int itemHeight) {
-		this.itemHeight = itemHeight;
+	public void setX0(int x0) {
+		this.x0 = x0;
+	}
+
+	public int getY0() {
+		return y0;
+	}
+
+	public void setY0(int y0) {
+		this.y0 = y0;
+	}
+
+	public int getX1() {
+		return x1;
+	}
+
+	public void setX1(int x1) {
+		this.x1 = x1;
+	}
+
+	public int getY1() {
+		return y1;
+	}
+
+	public void setY1(int y1) {
+		this.y1 = y1;
 	}
 
 	public int getColumns() {
@@ -91,6 +143,22 @@ public class EPaperProperties {
 		this.columns = columns;
 	}
 
+	public int getRows() {
+		return rows;
+	}
+
+	public void setRows(int rows) {
+		this.rows = rows;
+	}
+
+	public FontSize getFontSize() {
+		return fontSize;
+	}
+
+	public void setFontSize(FontSize fontSize) {
+		this.fontSize = fontSize;
+	}
+
 	public int getLineSpacing() {
 		return lineSpacing;
 	}
@@ -99,35 +167,59 @@ public class EPaperProperties {
 		this.lineSpacing = lineSpacing;
 	}
 
-	public int getMarginWidth() {
-		return marginWidth;
+	public int getTimePaddingLeft() {
+		return timePaddingLeft;
 	}
 
-	public void setMarginWidth(int marginWidth) {
-		this.marginWidth = marginWidth;
+	public void setTimePaddingLeft(int timePaddingLeft) {
+		this.timePaddingLeft = timePaddingLeft;
 	}
 
-	public int getTimeWidth() {
+	public int getTimePaddingRight() {
+		return timePaddingRight;
+	}
+
+	public void setTimePaddingRight(int timePaddingRight) {
+		this.timePaddingRight = timePaddingRight;
+	}
+
+	public double getTimeWidth() {
 		return timeWidth;
 	}
 
-	public void setTimeWidth(int timeWidth) {
+	public void setTimeWidth(double timeWidth) {
 		this.timeWidth = timeWidth;
 	}
 
-	public int getEtatWidth() {
+	public int getStationPaddingRight() {
+		return stationPaddingRight;
+	}
+
+	public void setStationPaddingRight(int stationPaddingRight) {
+		this.stationPaddingRight = stationPaddingRight;
+	}
+
+	public double getEtatWidth() {
 		return etatWidth;
 	}
 
-	public void setEtatWidth(int etatWidth) {
+	public void setEtatWidth(double etatWidth) {
 		this.etatWidth = etatWidth;
 	}
 
-	public int getStationWidth() {
+	public int getStationPaddingLeft() {
+		return stationPaddingLeft;
+	}
+
+	public void setStationPaddingLeft(int stationPaddingLeft) {
+		this.stationPaddingLeft = stationPaddingLeft;
+	}
+
+	public double getStationWidth() {
 		return stationWidth;
 	}
 
-	public void setStationWidth(int stationWidth) {
+	public void setStationWidth(double stationWidth) {
 		this.stationWidth = stationWidth;
 	}
 

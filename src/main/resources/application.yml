@@ -1,20 +1,71 @@
 spring:
   profiles:
-    active: small,light
+    active: dots-48,fullscreen,1-column,12-rows,light
 e-paper:
   timeout: 5000
   show-update-time: true
+  etat-width: 0.2
+  station-padding-left: 7
+  station-padding-right: 1
+  station-width: 0.65
+  line-spacing: 0
 ---
 spring:
-  profiles: small
+  profiles: dots-32
+e-paper:
+  font-size: dots-32
+  time-width: 75
+  time-padding-left: 1
+  time-padding-right: 7
+---
+spring:
+  profiles: dots-48
+e-paper:
+  font-size: dots-48
+  time-width: 111
+  time-padding-left: 1
+  time-padding-right: 7
+---
+spring:
+  profiles: dots-64
+e-paper:
+  font-size: dots-64
+  time-width: 135
+  time-padding-left: 1
+  time-padding-right: 7
+---
+spring:
+  profiles: fullscreen
+e-paper:
+  x0: 0
+  y0: 0
+  x1: 799
+  y1: 599
+---
+spring:
+  profiles: 1-column
+e-paper:
+  columns: 1
+---
+spring:
+  profiles: 2-columns
 e-paper:
   columns: 2
-  etat-width: 78
-  item-height: 40
-  line-spacing: 0
-  margin-width: 10
-  station-width: 233
-  time-width: 67
+---
+spring:
+  profiles: 15-rows
+e-paper:
+  rows: 15
+---
+spring:
+  profiles: 12-rows
+e-paper:
+  rows: 12
+---
+spring:
+  profiles: 9-rows
+e-paper:
+  rows: 9
 ---
 spring:
   profiles: dark
