@@ -6,12 +6,14 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 import fr.romainmoreau.epaper.client.api.Color;
 import fr.romainmoreau.epaper.client.api.EPaperClient;
 import fr.romainmoreau.epaper.client.api.FontSize;
 
 @Component
+@Validated
 @ConfigurationProperties("e-paper")
 public class EPaperProperties {
 	@NotNull
