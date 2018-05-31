@@ -3,6 +3,7 @@ spring:
     active: dots-48,fullscreen,1-column,12-rows,light
 e-paper:
   timeout: 5000
+  receive-timeout: 5
   show-update-time: true
   etat-width: 0.2
   station-padding-left: 7

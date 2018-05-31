@@ -21,6 +21,8 @@ public class EPaperProperties {
 
 	private long timeout;
 
+	private long receiveTimeout;
+
 	private boolean showUpdateTime;
 
 	@Min(0)
@@ -95,6 +97,14 @@ public class EPaperProperties {
 
 	public void setTimeout(long timeout) {
 		this.timeout = timeout;
+	}
+
+	public long getReceiveTimeout() {
+		return receiveTimeout;
+	}
+
+	public void setReceiveTimeout(long receiveTimeout) {
+		this.receiveTimeout = receiveTimeout;
 	}
 
 	public boolean isShowUpdateTime() {

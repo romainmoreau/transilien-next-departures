@@ -20,8 +20,9 @@ public class EPaperConfiguration {
 
 	@Bean
 	public EPaperClient ePaperClient() throws IOException {
-		LOGGER.info("Creating e-paper client using port name {} and timeout {}", ePaperProperties.getPortName(),
-				ePaperProperties.getTimeout());
-		return new JsscEPaperClient(ePaperProperties.getPortName(), ePaperProperties.getTimeout());
+		LOGGER.info("Creating JSSC e-paper client using port name {}, timeout {} and receive timeout {}",
+				ePaperProperties.getPortName(), ePaperProperties.getTimeout(), ePaperProperties.getReceiveTimeout());
+		return new JsscEPaperClient(ePaperProperties.getPortName(), ePaperProperties.getTimeout(),
+				ePaperProperties.getReceiveTimeout());
 	}
 }
